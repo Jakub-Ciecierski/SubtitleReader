@@ -81,6 +81,12 @@ namespace SubtitleReader.Time
         /************************ PRIVATE METHODS **************************/
         /*******************************************************************/
 
+        /// <summary>
+        ///     The timer event, computes and adds time ellapsed
+        ///     to CurrentTime, and selects next segment
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
         private void onTimedEvent(Object source, ElapsedEventArgs e)
         {
             long timeNow = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
@@ -90,14 +96,25 @@ namespace SubtitleReader.Time
             lock (CurrentTime)
             {
                 CurrentTime.Add(delta);
-
-                if(subtitle.IsNextSegmentReady(CurrentTime))
-                {
-                    CurrentSegment = subtitle.GetCurrentSegment();
-
-                    Console.Write(CurrentSegment.ToString() + "\n");
-                }
+                fetchCurrentSegment();
             }
+        }
+
+        /// <summary>
+        ///     Looks for next appropriate segment
+        /// </summary>
+        private void fetchCurrentSegment()
+        {
+            if (subtitle.IsNextSegmentReady(CurrentTime))
+            {
+                CurrentSegment = subtitle.GetCurrentSegment();
+                Console.Write(CurrentSegment.ToString() + "\n");
+            }
+
+            // If the time interval has passed, set the 
+            // current segment to empty one
+            if (CurrentSegment.Finished(CurrentTime))
+                CurrentSegment = new Segment();
         }
 
         /*******************************************************************/

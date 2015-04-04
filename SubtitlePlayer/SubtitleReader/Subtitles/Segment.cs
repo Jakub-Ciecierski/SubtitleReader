@@ -81,6 +81,11 @@ namespace SubtitleReader.Subtitles
         /************************** CONSTRUCTORS **************************/
         /******************************************************************/
 
+        public Segment()
+        {
+
+        }
+
         public Segment(int id, TimeStamp start, TimeStamp end, string content)
         {
             Id = id;
@@ -108,6 +113,11 @@ namespace SubtitleReader.Subtitles
         /*******************************************************************/
         /************************* PUBLIC METHODS **************************/
         /*******************************************************************/
+
+        public bool Finished(TimeStamp time)
+        {
+            return time.ToMilliSeconds() > EndTime.ToMilliSeconds();
+        }
 
         public override string ToString()
         {
