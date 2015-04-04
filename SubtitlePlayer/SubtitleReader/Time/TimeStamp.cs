@@ -27,7 +27,11 @@ namespace SubtitleReader.Time
 
         public TimeStamp()
         {
+        }
 
+        public TimeStamp(long ms)
+        {
+            setTimeMs(ms);
         }
 
         public TimeStamp(uint hour, uint min, uint sec, uint ms)
@@ -42,9 +46,34 @@ namespace SubtitleReader.Time
         /************************ PRIVATE METHODS **************************/
         /*******************************************************************/
 
+        private void setTimeMs(long ms)
+        {
+            uint seconds = (uint)(ms / 1000);
+            uint millisconds = (uint)(ms % 1000);
+
+            uint minutes = seconds / 60;
+            seconds = seconds % 60;
+
+            uint hours = minutes / 60;
+            minutes = minutes % 60;
+
+            Hour = hours;
+            Minute = minutes;
+            Second = seconds;
+            Millisecond = millisconds;
+        }
         /*******************************************************************/
         /************************* PUBLIC METHODS **************************/
         /*******************************************************************/
+
+        /// <summary>
+        ///     Sets the time in TimeStamp, given by milliseconds
+        /// </summary>
+        /// <param name="ms"></param>
+        public void SetTime(long ms)
+        {
+            setTimeMs(ms);
+        }
 
         /// <summary>
         ///     Return the length of timestamp in milliseconds

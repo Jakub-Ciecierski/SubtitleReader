@@ -1,4 +1,5 @@
-﻿using SubtitleReader.Time;
+﻿using SubtitleReader.Subtitles;
+using SubtitleReader.Time;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace SubtitleReader
+namespace SubtitleReader.SubLoaders
 {
     public class SrtLoader
     {

@@ -1,4 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SubtitleReader;
+using SubtitleReader.Subtitles;
 using SubtitleReader.Time;
 using System;
 using System.Collections.Generic;
@@ -77,6 +79,31 @@ namespace UnitTestSubtitle
             long time1Ms = time1.ToMilliSeconds();
 
             actualTime.Add(time1Ms);
+
+            Assert.AreEqual(expectedTime, actualTime);
+        }
+
+        [TestMethod]
+        public void CheckTimeInterval_TimeStamp_FallsInInterval()
+        {
+            TimeStamp start = new TimeStamp(0, 0, 1, 0);
+            TimeStamp end = new TimeStamp(0, 0, 1, 500);
+
+            Segment segment = new Segment(0, start, end, "");
+
+            TimeStamp someTime = new TimeStamp(0, 0, 1, 399);
+
+            bool expectedValue = true;
+
+            Assert.AreEqual(expectedValue, segment.IsInInterval(someTime));
+        }
+
+        [TestMethod]
+        public void TimeStamp_TimeStampFromHours_TimeStampFromMilliseconds()
+        {
+            TimeStamp actualTime = new TimeStamp(1, 24, 57, 111);
+
+            TimeStamp expectedTime = new TimeStamp(actualTime.ToMilliSeconds());
 
             Assert.AreEqual(expectedTime, actualTime);
         }
