@@ -1,4 +1,6 @@
 ﻿using SubtitleReader;
+using SubtitleReader.Subtitles;
+using SubtitleReader.Time;
 using System;
 using System.Collections.Generic;
 using System.Linq;

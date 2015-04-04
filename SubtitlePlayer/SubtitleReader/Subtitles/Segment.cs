@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SubtitleReader
+namespace SubtitleReader.Subtitles
 {
     /// <summary>
     ///     Segment is a single segment of a subtitle
@@ -92,6 +92,18 @@ namespace SubtitleReader
         /*******************************************************************/
         /************************ PRIVATE METHODS **************************/
         /*******************************************************************/
+
+        /// <summary>
+        ///     Checks if given TimeStamp fits in
+        ///     the segment interval
+        /// </summary>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        public bool IsInInterval(TimeStamp time)
+        {
+            return (time.ToMilliSeconds() >= StartTime.ToMilliSeconds() &&
+                    time.ToMilliSeconds() <= EndTime.ToMilliSeconds());
+        }
 
         /*******************************************************************/
         /************************* PUBLIC METHODS **************************/

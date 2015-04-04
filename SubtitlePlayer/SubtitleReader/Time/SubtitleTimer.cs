@@ -1,4 +1,5 @@
-﻿using SubtitleReader.Time;
+﻿using SubtitleReader.Subtitles;
+using SubtitleReader.Time;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace SubtitleReader
+namespace SubtitleReader.Time
 {
     /// <summary>
     ///     Reads current segment of subtitle
@@ -50,7 +51,19 @@ namespace SubtitleReader
             private set { currentTime = value; }
         }
 
-        long timePassed;
+        /// <summary>
+        ///     The current segment in time
+        /// </summary>
+        private Segment currentSegment;
+
+        public Segment CurrentSegment
+        {
+            get { return currentSegment;}
+            private set { currentSegment = value;}
+        }
+	
+
+        private long timePassed;
 
         /******************************************************************/
         /************************** CONSTRUCTORS **************************/
@@ -60,6 +73,9 @@ namespace SubtitleReader
         {
             this.subtitle = subtitle;
             CurrentTime = new TimeStamp();
+
+            timer = new Timer(TIMER_TICK);
+            timer.Elapsed += onTimedEvent;
         }
 
         /*******************************************************************/
@@ -72,20 +88,60 @@ namespace SubtitleReader
             long delta = timeNow - timePassed;
             timePassed = timeNow;
 
-            CurrentTime.Add(delta);
-            Console.Write(CurrentTime.ToString() + "\n");
+            lock (CurrentTime)
+            {
+                CurrentTime.Add(delta);
+
+                if(subtitle.IsNextSegmentReady(CurrentTime))
+                {
+                    CurrentSegment = subtitle.GetCurrentSegment();
+
+                    Console.Write(CurrentSegment.ToString() + "\n");
+                }
+            }
         }
 
         /*******************************************************************/
         /************************* PUBLIC METHODS **************************/
         /*******************************************************************/
 
+        /// <summary>
+        ///     Starts the timer
+        /// </summary>
         public void Start()
         {
-            timer = new Timer(TIMER_TICK);
-            timer.Elapsed += onTimedEvent;
             timePassed = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
             timer.Enabled = true;
+        }
+
+        /// <summary>
+        ///     Stops the timer
+        /// </summary>
+        public void Stop()
+        {
+            timer.Enabled = false;
+        }
+
+        /// <summary>
+        ///     Seeks to given TimeStamp, changes current segment
+        ///     according to that time.
+        /// </summary>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        public bool Seek(TimeStamp time)
+        {
+            if (time.ToMilliSeconds() >= subtitle.Length.ToMilliSeconds())
+                return false;
+
+            Stop();
+            subtitle.Seek(time);
+            lock(CurrentTime)
+            {
+                CurrentTime = time;
+            }
+            Start();
+
+            return true;
         }
     }
 }

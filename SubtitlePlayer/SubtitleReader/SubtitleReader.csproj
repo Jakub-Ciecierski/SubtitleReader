@@ -40,10 +40,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Segment.cs" />
-    <Compile Include="SrtLoader.cs" />
-    <Compile Include="Subtitle.cs" />
-    <Compile Include="SubtitleTimer.cs" />
+    <Compile Include="Subtitles\Segment.cs" />
+    <Compile Include="SubLoaders\SrtLoader.cs" />
+    <Compile Include="Subtitles\Subtitle.cs" />
+    <Compile Include="Time\SubtitleTimer.cs" />
     <Compile Include="Time\TimeStamp.cs" />
   </ItemGroup>
   <ItemGroup>
