@@ -61,7 +61,6 @@ namespace SubtitleReader.Time
             get { return currentSegment;}
             private set { currentSegment = value;}
         }
-	
 
         private long timePassed;
 
