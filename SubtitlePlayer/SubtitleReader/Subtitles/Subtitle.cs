@@ -2,6 +2,7 @@
 using SubtitleReader.Time;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -26,7 +27,7 @@ namespace SubtitleReader.Subtitles
             set { segmentQueue = value; }
         }
 
-        private int currentIndex = -1;
+        private int currentIndex = 0;
 
         /// <summary>
         ///     The last subtitle's segment end time stamp.
@@ -93,7 +94,7 @@ namespace SubtitleReader.Subtitles
         {
             if (currentIndex + 1 >= segmentQueue.Count)
                 return false;
-            Segment seg = segmentQueue[currentIndex + 1];
+            Segment seg = segmentQueue[currentIndex];
             if (seg.IsInInterval(time))
             {
                 currentIndex++;
@@ -107,5 +108,6 @@ namespace SubtitleReader.Subtitles
         {
             return segmentQueue[currentIndex];
         }
+    
     }
 }

@@ -2,6 +2,7 @@
 using SubtitleReader.Time;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,7 @@ namespace SubtitleReader.Time
     ///     Reads current segment of subtitle
     ///     
     /// </summary>
-    public class SubtitleTimer
+    public class SubtitleTimer : INotifyPropertyChanged
     {
         /******************************************************************/
         /******************* PROPERTIES, PRIVATE FIELDS *******************/
@@ -48,7 +49,7 @@ namespace SubtitleReader.Time
         public TimeStamp CurrentTime
         {
             get { return currentTime; }
-            private set { currentTime = value; }
+            private set { currentTime = value; OnPropertyChanged("CurrentTime"); }
         }
 
         /// <summary>
@@ -59,7 +60,11 @@ namespace SubtitleReader.Time
         public Segment CurrentSegment
         {
             get { return currentSegment;}
-            private set { currentSegment = value;}
+            private set 
+            { 
+                currentSegment = value;
+                OnPropertyChanged("CurrentSegment");
+            }
         }
 
         private long timePassed;
@@ -75,6 +80,8 @@ namespace SubtitleReader.Time
 
             timer = new Timer(TIMER_TICK);
             timer.Elapsed += onTimedEvent;
+
+            CurrentSegment = subtitle.GetCurrentSegment();
         }
 
         /*******************************************************************/
@@ -96,6 +103,7 @@ namespace SubtitleReader.Time
             lock (CurrentTime)
             {
                 CurrentTime.Add(delta);
+                OnPropertyChanged("CurrentTime");
                 fetchCurrentSegment();
             }
         }
@@ -158,6 +166,16 @@ namespace SubtitleReader.Time
             Start();
 
             return true;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
     }
 }

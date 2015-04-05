@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SubtitleReader.Time
 {
-    public class TimeStamp
+    public class TimeStamp : INotifyPropertyChanged
     {
         /******************************************************************/
         /******************* PROPERTIES, PRIVATE FIELDS *******************/
@@ -16,10 +17,10 @@ namespace SubtitleReader.Time
         private uint sec;
         private uint ms;
 
-        public uint Hour { get { return hour; } private set { hour = value; } }
-        public uint Minute { get { return min; } private set { min = value; } }
-        public uint Second { get { return sec; } private set { sec = value; } }
-        public uint Millisecond { get { return ms; } private set { ms = value; } }
+        public uint Hour { get { return hour; } private set { hour = value; OnPropertyChanged("Hour"); } }
+        public uint Minute { get { return min; } private set { min = value; OnPropertyChanged("Minute"); } }
+        public uint Second { get { return sec; } private set { sec = value; OnPropertyChanged("Second"); } }
+        public uint Millisecond { get { return ms; } private set { ms = value; OnPropertyChanged("Millisecond"); } }
 
         /******************************************************************/
         /************************** CONSTRUCTORS **************************/
@@ -72,6 +73,7 @@ namespace SubtitleReader.Time
         /// <param name="ms"></param>
         public void SetTime(long ms)
         {
+            OnPropertyChanged("CurrentTime");
             setTimeMs(ms);
         }
 
@@ -116,6 +118,7 @@ namespace SubtitleReader.Time
             Minute = Minute % 60;
 
             Hour += hourToAdd + hours;
+            OnPropertyChanged("CurrentTime");
         }
 
         public override string ToString()
@@ -154,6 +157,16 @@ namespace SubtitleReader.Time
                     time.Minute == Minute &&
                     time.Second == Second &&
                     time.Millisecond == Millisecond);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
     }
 }

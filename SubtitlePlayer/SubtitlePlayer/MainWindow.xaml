@@ -1,13 +1,16 @@
 ﻿<Controls:MetroWindow x:Class="SubtitlePlayer.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:SubtitlePlayer"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        Title="MainWindow" Height="250" Width="800" WindowStyle="None" AllowsTransparency="True" Background="Transparent" MouseEnter="Window_MouseEnter" MouseLeave="MetroWindow_MouseLeave"  ShowTitleBar="False">
+        Title="MainWindow" Topmost="True" Height="250" Width="800" WindowStyle="None" AllowsTransparency="True" Background="Transparent" MouseEnter="Window_MouseEnter" MouseLeave="MetroWindow_MouseLeave"  ShowTitleBar="False">
     <Window.Resources>
         <SolidColorBrush x:Key="TransparentBlue" Color="#00b0f0" Opacity="0.5" />
+        <local:StringFormatter x:Key="StringConverter"/>
     </Window.Resources>
+
     <Border Name="myBorder" BorderThickness="3">
-    <Grid Name="myGrid" Background="#01FF0000">
+        <Grid Name="myGrid" Background="#01FF0000">
             <Grid.RowDefinitions>
                 <RowDefinition Height="10*"/>
                 <RowDefinition Height="3*"/>
@@ -19,11 +22,11 @@
                     <ColumnDefinition Width="4*" />
                 </Grid.ColumnDefinitions>
                 <Button Name="openButton" Content="Open" Click="openSubtitleButtonClick" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Center" Width="75"/>
-                <Button Name="playPauseButton"   Content="Pause" Click="playPauseButton_Click"  HorizontalAlignment="Right" Margin="5" VerticalAlignment="Center" Width="75"/>
-                <TextBox Name="timeStampTextBox" Grid.Column="2" Width="120" Height="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">00:00:05,771</TextBox>
+                <Button Name="playPauseButton"   Content="Play" Click="playPauseButton_Click"  HorizontalAlignment="Right" Margin="5" VerticalAlignment="Center" Width="75"/>
+                <TextBox Name="timeStampTextBox"  Text="{Binding Path=CurrentTime, Mode=OneWay, Converter={StaticResource StringConverter}}" Grid.Column="2" Width="120" Height="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
                 <Slider Name="timeSlider" Grid.Column="1" VerticalAlignment="Center" Margin="10" ></Slider>
             </Grid>
-    </Grid>
+        </Grid>
     </Border>
     <!--  <Grid Background="Transparent">
         <Button  Content="Open subtitle" Click="openSubtitleButtonClick" HorizontalAlignment="Left" Margin="147,64,0,0" VerticalAlignment="Top" Width="75"/>

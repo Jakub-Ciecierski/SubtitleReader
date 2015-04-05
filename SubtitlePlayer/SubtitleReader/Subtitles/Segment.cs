@@ -1,6 +1,7 @@
 ﻿using SubtitleReader.Time;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace SubtitleReader.Subtitles
     ///     2) Time stamp interval - start and finish
     ///     3) Content
     /// </summary>
-    public class Segment
+    public class Segment : INotifyPropertyChanged
     {
         /******************************************************************/
         /******************* PROPERTIES, PRIVATE FIELDS *******************/
@@ -60,7 +61,7 @@ namespace SubtitleReader.Subtitles
         public string Content
         {
             get { return content; }
-            private set { content = value; }
+            private set { content = value; OnPropertyChanged("Content"); }
         }
 
         /// <summary>
@@ -83,7 +84,10 @@ namespace SubtitleReader.Subtitles
 
         public Segment()
         {
-
+            Id = -1;
+            Content = "";
+            EndTime = new TimeStamp();
+            StartTime = new TimeStamp();
         }
 
         public Segment(int id, TimeStamp start, TimeStamp end, string content)
@@ -127,6 +131,16 @@ namespace SubtitleReader.Subtitles
             string segment = idStr + "\n" + time + "\n" + content;
 
             return segment;
-        } 
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
     }
 }

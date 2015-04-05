@@ -24,6 +24,10 @@ namespace SubtitlePlayer
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
+        Subtitle subtitle;
+
+        SubtitleTimer subtitleTimer;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -36,6 +40,11 @@ namespace SubtitlePlayer
             myBorder.BorderBrush = new SolidColorBrush(color);
             color = (Color)ColorConverter.ConvertFromString("#FF000000");
             this.Background = new SolidColorBrush(color);
+        }
+
+        private void setBindings()
+        {
+            this.DataContext = subtitleTimer;
         }
 
         private void openSubtitleButtonClick(object sender, RoutedEventArgs e)
@@ -55,12 +64,14 @@ namespace SubtitlePlayer
                 // Open document 
                 string filename = dlg.FileName;
 
-                Subtitle subtitle = new Subtitle(filename);
+                subtitle = new Subtitle(filename);
 
-                SubtitleTimer subtitleTimer = new SubtitleTimer(subtitle);
-                subtitleTimer.Start();
+                subtitleTimer = new SubtitleTimer(subtitle);
+
+                setBindings();
             }
         }
+
         /// <summary>
         ///  Mouse entering the window
         /// </summary>
@@ -77,8 +88,9 @@ namespace SubtitlePlayer
             playPauseButton.Visibility = Visibility.Visible;
             openButton.Visibility = Visibility.Visible;
             timeStampTextBox.Visibility = Visibility.Visible;
-            timeSlider.Visibility = Visibility.Visible ;
+            timeSlider.Visibility = Visibility.Visible;
         }
+
         /// <summary>
         /// Mouse leaving the window
         /// </summary>
@@ -90,24 +102,32 @@ namespace SubtitlePlayer
             Color color = (Color)ColorConverter.ConvertFromString("#00DFD991");
             myBorder.BorderBrush = new SolidColorBrush(color);
             color = (Color)ColorConverter.ConvertFromString("#01FF0000");
-           this.Background = new SolidColorBrush(color);
+            this.Background = new SolidColorBrush(color);
 
-           playPauseButton.Visibility = Visibility.Collapsed;
-           openButton.Visibility = Visibility.Collapsed;
-           timeStampTextBox.Visibility = Visibility.Collapsed;
-           timeSlider.Visibility = Visibility.Collapsed;
+            playPauseButton.Visibility = Visibility.Collapsed;
+            openButton.Visibility = Visibility.Collapsed;
+            timeStampTextBox.Visibility = Visibility.Collapsed;
+            timeSlider.Visibility = Visibility.Collapsed;
             
+            
+            subtitleText.Visibility = Visibility.Visible;
         }
 
         private void playPauseButton_Click(object sender, RoutedEventArgs e)
         {
-            if (playPauseButton.Content == "Stop")
+            if (playPauseButton.Content.Equals("Stop"))
             {
                 playPauseButton.Content = "Play";
+                Console.Write("Start subtitle \n");
+                if (subtitleTimer != null)
+                    subtitleTimer.Stop();
             }
             else
             {
                 playPauseButton.Content = "Stop";
+                Console.Write("Stop subtitle \n");
+                if (subtitleTimer != null)
+                    subtitleTimer.Start();
             }
         }
     }
