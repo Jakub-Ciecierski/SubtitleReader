@@ -8,6 +8,10 @@ namespace SubtitleReader.Util
 {
     public class Formats
     {
-
+        public static bool IsAvaible(string filename)
+        {
+            string ext = filename.Substring(filename.Length - 4);
+            return ext.Equals(".srt");
+        }
     }
 }

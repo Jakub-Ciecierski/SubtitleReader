@@ -109,6 +109,9 @@ namespace SubtitleReader.Time
                 CurrentTime.Add(delta);
                 OnPropertyChanged("CurrentTime");
                 fetchCurrentSegment();
+
+                if (CurrentTime.ToMilliSeconds() >= subtitle.Length.ToMilliSeconds())
+                    timer.Enabled = false;
             }
         }
 

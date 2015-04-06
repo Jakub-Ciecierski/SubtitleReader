@@ -19,8 +19,6 @@ namespace SubtitlePlayer
 
         private SubtitleTimer subtitleTimer;
 
-        private bool dragCompleted = false;
-
         public TimeSlider(Slider timeSlider, Subtitle subtitle, SubtitleTimer subtitleTimer)
         {
             this.timeSlider = timeSlider;
@@ -29,13 +27,6 @@ namespace SubtitlePlayer
 
             this.subtitleTimer = subtitleTimer;
 
-            timeSlider.ValueChanged += valueChangedHandler;
-
-            timeSlider.AddHandler(Thumb.DragCompletedEvent, new DragCompletedEventHandler(dragCompletedHandler));
-            timeSlider.AddHandler(Thumb.DragStartedEvent, new DragStartedEventHandler(dragStartedHandler));
-
-
-
             setSlider();
         }
         private void setSlider()
@@ -43,29 +34,6 @@ namespace SubtitlePlayer
             timeSlider.Maximum = subtitle.Length.ToMilliSeconds() / 1000;
             timeSlider.TickFrequency = 1;
             timeSlider.IsSnapToTickEnabled = true;
-        }
-
-        private void dragStartedHandler(object sender, DragStartedEventArgs e)
-        {
-            //dragCompleted = true;
-            Console.Write("Drag started\n");
-        }
-
-        private void dragCompletedHandler(object sender, DragCompletedEventArgs e)
-        {
-            dragCompleted = true;
-            Console.Write("Drag completed\n");
-        }
-
-        private void valueChangedHandler(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if(dragCompleted)
-            {
-                Console.Write(timeSlider.Value + "\n");
-                subtitleTimer.Seek(new TimeStamp((long)(timeSlider.Value * 1000)));
-
-                dragCompleted = false;
-            }
         }
     }
 }

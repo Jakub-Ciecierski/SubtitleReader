@@ -19,6 +19,7 @@ using MahApps;
 using MahApps.Metro.Controls;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
+using SubtitleReader.Util;
 
 namespace SubtitlePlayer
 {
@@ -27,13 +28,6 @@ namespace SubtitlePlayer
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        private const int GWL_STYLE = -16;
-        private const int WS_SYSMENU = 0x80000;
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
-        [DllImport("user32.dll")]
-        private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
-
         private Subtitle subtitle;
 
         private SubtitleTimer subtitleTimer;
@@ -46,9 +40,6 @@ namespace SubtitlePlayer
         {
             InitializeComponent();
 
-            var hwnd = new WindowInteropHelper(this).Handle;
-            SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_SYSMENU);
-
             this.AllowsTransparency = true;
             this.WindowStyle = WindowStyle.None;
             this.ShowTitleBar = true;
@@ -58,9 +49,15 @@ namespace SubtitlePlayer
             this.Background = new SolidColorBrush(color);
         }
 
+        /// <summary>
+        ///     Starts the actual subtitle app
+        /// </summary>
+        /// <param name="filename"></param>
         private void startSubtitle(string filename)
         {
-            // check filename srt
+            if (!Formats.IsAvaible(filename))
+                return;
+
             subtitle = new Subtitle(filename);
 
             subtitleTimer = new SubtitleTimer(subtitle);
@@ -124,6 +121,8 @@ namespace SubtitlePlayer
             timeStampTextBox.Visibility = Visibility.Collapsed;
             timeSliderControl.Visibility = Visibility.Collapsed;
         }
+
+        /********************** EVENT HANDLERS **********************/
 
         private void playPauseButton_Click(object sender, RoutedEventArgs e)
         {
@@ -213,7 +212,11 @@ namespace SubtitlePlayer
                 setComponentsInvisible();
         }
 
-
+        /// <summary>
+        ///     Opens settings window
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void settingsButtonClick(object sender, RoutedEventArgs e)
         {
 
@@ -221,11 +224,15 @@ namespace SubtitlePlayer
             if (fontChooser.ShowDialog() == true)
             {
                 subtitleText.FontSize = System.Convert.ToInt32(fontChooser.Answer);
-                MessageBox.Show(fontChooser.Answer);
             }
                 
         }
 
+        /// <summary>
+        ///     Handles the drag and drop
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void windowDropFileHandler(object sender, DragEventArgs e)
         {
             string[] filenames = (string[])e.Data.GetData(DataFormats.FileDrop, true);
