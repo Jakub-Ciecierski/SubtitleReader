@@ -24,9 +24,11 @@ namespace SubtitlePlayer
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        Subtitle subtitle;
+        private Subtitle subtitle;
 
-        SubtitleTimer subtitleTimer;
+        private SubtitleTimer subtitleTimer;
+
+        private TimeSlider timeSlider;
 
         public MainWindow()
         {
@@ -45,6 +47,25 @@ namespace SubtitlePlayer
         private void setBindings()
         {
             this.DataContext = subtitleTimer;
+        }
+
+        private void addButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (subtitleTimer != null)
+            {
+                TimeStamp currentTime = new TimeStamp(subtitleTimer.CurrentTime.ToMilliSeconds() + 1000);
+
+                subtitleTimer.Seek(currentTime);
+            }
+        }
+        private void subtractButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (subtitleTimer != null) 
+            {
+                TimeStamp currentTime = new TimeStamp(subtitleTimer.CurrentTime.ToMilliSeconds() - 1000);
+
+                subtitleTimer.Seek(currentTime);
+            }
         }
 
         private void openSubtitleButtonClick(object sender, RoutedEventArgs e)
@@ -69,6 +90,8 @@ namespace SubtitlePlayer
                 subtitleTimer = new SubtitleTimer(subtitle);
 
                 setBindings();
+
+                timeSlider = new TimeSlider(timeSliderControl, subtitle, subtitleTimer);
             }
         }
 
@@ -88,7 +111,9 @@ namespace SubtitlePlayer
             playPauseButton.Visibility = Visibility.Visible;
             openButton.Visibility = Visibility.Visible;
             timeStampTextBox.Visibility = Visibility.Visible;
-            timeSlider.Visibility = Visibility.Visible;
+            timeSliderControl.Visibility = Visibility.Visible;
+            subtractButton.Visibility = Visibility.Visible;
+            addButton.Visibility = Visibility.Visible;
         }
 
         /// <summary>
@@ -107,27 +132,31 @@ namespace SubtitlePlayer
             playPauseButton.Visibility = Visibility.Collapsed;
             openButton.Visibility = Visibility.Collapsed;
             timeStampTextBox.Visibility = Visibility.Collapsed;
-            timeSlider.Visibility = Visibility.Collapsed;
-            
+            timeSliderControl.Visibility = Visibility.Collapsed;
+            subtractButton.Visibility = Visibility.Collapsed;
+            addButton.Visibility = Visibility.Collapsed;
             
             subtitleText.Visibility = Visibility.Visible;
         }
 
         private void playPauseButton_Click(object sender, RoutedEventArgs e)
         {
-            if (playPauseButton.Content.Equals("Stop"))
+            if (subtitleTimer != null)
             {
-                playPauseButton.Content = "Play";
-                Console.Write("Start subtitle \n");
-                if (subtitleTimer != null)
-                    subtitleTimer.Stop();
-            }
-            else
-            {
-                playPauseButton.Content = "Stop";
-                Console.Write("Stop subtitle \n");
-                if (subtitleTimer != null)
-                    subtitleTimer.Start();
+                if (playPauseButton.Content.Equals("Stop"))
+                {
+                    playPauseButton.Content = "Play";
+                    Console.Write("Start subtitle \n");
+                    if (subtitleTimer != null)
+                        subtitleTimer.Stop();
+                }
+                else
+                {
+                    playPauseButton.Content = "Stop";
+                    Console.Write("Stop subtitle \n");
+                    if (subtitleTimer != null)
+                        subtitleTimer.Start();
+                }
             }
         }
     }

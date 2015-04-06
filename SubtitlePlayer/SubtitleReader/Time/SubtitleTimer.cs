@@ -49,7 +49,11 @@ namespace SubtitleReader.Time
         public TimeStamp CurrentTime
         {
             get { return currentTime; }
-            private set { currentTime = value; OnPropertyChanged("CurrentTime"); }
+             set 
+            { 
+                currentTime = value; 
+                OnPropertyChanged("CurrentTime"); 
+            }
         }
 
         /// <summary>
@@ -63,7 +67,7 @@ namespace SubtitleReader.Time
             private set 
             { 
                 currentSegment = value;
-                OnPropertyChanged("CurrentSegment");
+                RaisePropertyChanged("CurrentSegment");
             }
         }
 
@@ -81,7 +85,7 @@ namespace SubtitleReader.Time
             timer = new Timer(TIMER_TICK);
             timer.Elapsed += onTimedEvent;
 
-            CurrentSegment = subtitle.GetCurrentSegment();
+            CurrentSegment = new Segment();
         }
 
         /*******************************************************************/
@@ -122,7 +126,9 @@ namespace SubtitleReader.Time
             // If the time interval has passed, set the 
             // current segment to empty one
             if (CurrentSegment.Finished(CurrentTime))
+            {
                 CurrentSegment = new Segment();
+            }
         }
 
         /*******************************************************************/
@@ -157,13 +163,17 @@ namespace SubtitleReader.Time
             if (time.ToMilliSeconds() >= subtitle.Length.ToMilliSeconds())
                 return false;
 
+            bool wasStoped = timer.Enabled;
+
             Stop();
+            CurrentSegment = new Segment();
             subtitle.Seek(time);
             lock(CurrentTime)
             {
                 CurrentTime = time;
             }
-            Start();
+            if(wasStoped)
+                Start();
 
             return true;
         }
@@ -171,6 +181,14 @@ namespace SubtitleReader.Time
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        protected void RaisePropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
             {

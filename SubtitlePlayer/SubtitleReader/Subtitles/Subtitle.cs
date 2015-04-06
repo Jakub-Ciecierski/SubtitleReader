@@ -27,7 +27,7 @@ namespace SubtitleReader.Subtitles
             set { segmentQueue = value; }
         }
 
-        private int currentIndex = 0;
+        private int currentIndex = -1;
 
         /// <summary>
         ///     The last subtitle's segment end time stamp.
@@ -49,6 +49,8 @@ namespace SubtitleReader.Subtitles
         {
             SrtLoader srtLoader = new SrtLoader(filename);
             this.SegmentQueue = srtLoader.ComputeSegments();
+
+            Length = new TimeStamp(segmentQueue[segmentQueue.Count - 1].EndTime.ToMilliSeconds());
         }
 
 
@@ -62,7 +64,8 @@ namespace SubtitleReader.Subtitles
         
         /// <summary>
         ///     Seeks for position in the queue
-        ///     with specified TimeStamp
+        ///     with specified TimeStamp 
+        ///     TODO fix seek
         /// </summary>
         /// <param name="time"></param>
         public bool Seek(TimeStamp time)
@@ -94,7 +97,7 @@ namespace SubtitleReader.Subtitles
         {
             if (currentIndex + 1 >= segmentQueue.Count)
                 return false;
-            Segment seg = segmentQueue[currentIndex];
+            Segment seg = segmentQueue[currentIndex + 1];
             if (seg.IsInInterval(time))
             {
                 currentIndex++;

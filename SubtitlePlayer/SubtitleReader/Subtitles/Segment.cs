@@ -120,7 +120,9 @@ namespace SubtitleReader.Subtitles
 
         public bool Finished(TimeStamp time)
         {
-            return time.ToMilliSeconds() > EndTime.ToMilliSeconds();
+            if (time.ToMilliSeconds() >= EndTime.ToMilliSeconds())
+                return true;
+            return false;
         }
 
         public override string ToString()

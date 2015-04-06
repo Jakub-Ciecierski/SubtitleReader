@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
-namespace SubtitlePlayer
+namespace SubtitlePlayer.Converters
 {
     public class StringFormatter : IValueConverter
     {

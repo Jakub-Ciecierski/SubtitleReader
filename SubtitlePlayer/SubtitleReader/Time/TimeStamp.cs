@@ -17,10 +17,10 @@ namespace SubtitleReader.Time
         private uint sec;
         private uint ms;
 
-        public uint Hour { get { return hour; } private set { hour = value; OnPropertyChanged("Hour"); } }
-        public uint Minute { get { return min; } private set { min = value; OnPropertyChanged("Minute"); } }
-        public uint Second { get { return sec; } private set { sec = value; OnPropertyChanged("Second"); } }
-        public uint Millisecond { get { return ms; } private set { ms = value; OnPropertyChanged("Millisecond"); } }
+        public uint Hour { get { return hour; } private set { hour = value; } }
+        public uint Minute { get { return min; } private set { min = value; } }
+        public uint Second { get { return sec; } private set { sec = value; } }
+        public uint Millisecond { get { return ms; } private set { ms = value; } }
 
         /******************************************************************/
         /************************** CONSTRUCTORS **************************/
@@ -32,6 +32,8 @@ namespace SubtitleReader.Time
 
         public TimeStamp(long ms)
         {
+            if (ms < 0)
+                ms = 0;
             setTimeMs(ms);
         }
 
@@ -73,8 +75,8 @@ namespace SubtitleReader.Time
         /// <param name="ms"></param>
         public void SetTime(long ms)
         {
-            OnPropertyChanged("CurrentTime");
             setTimeMs(ms);
+            OnPropertyChanged("CurrentTime");
         }
 
         /// <summary>
