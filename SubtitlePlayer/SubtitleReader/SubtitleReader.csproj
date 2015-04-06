@@ -45,6 +45,7 @@
     <Compile Include="Subtitles\Subtitle.cs" />
     <Compile Include="Time\SubtitleTimer.cs" />
     <Compile Include="Time\TimeStamp.cs" />
+    <Compile Include="Util\Formats.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\subtitle.srt" />

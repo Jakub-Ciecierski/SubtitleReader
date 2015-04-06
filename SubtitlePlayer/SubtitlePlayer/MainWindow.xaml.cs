@@ -19,6 +19,7 @@ using MahApps;
 using MahApps.Metro.Controls;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
+
 namespace SubtitlePlayer
 {
     /// <summary>
@@ -57,82 +58,33 @@ namespace SubtitlePlayer
             this.Background = new SolidColorBrush(color);
         }
 
+        private void startSubtitle(string filename)
+        {
+            // check filename srt
+            subtitle = new Subtitle(filename);
+
+            subtitleTimer = new SubtitleTimer(subtitle);
+
+            setBindings();
+
+            timeSlider = new TimeSlider(timeSliderControl, subtitle, subtitleTimer);
+
+            subtitleLoaded = true;
+            setComponentsVisible();
+        }
+
+        /// <summary>
+        ///     Sets binding for data
+        /// </summary>
         private void setBindings()
         {
             this.DataContext = subtitleTimer;
         }
 
-        private void addButtonClick(object sender, RoutedEventArgs e)
-        {
-            if (subtitleTimer != null)
-            {
-                TimeStamp currentTime = new TimeStamp(subtitleTimer.CurrentTime.ToMilliSeconds() + 1000);
-
-                subtitleTimer.Seek(currentTime);
-            }
-        }
-        private void subtractButtonClick(object sender, RoutedEventArgs e)
-        {
-            if (subtitleTimer != null) 
-            {
-                TimeStamp currentTime = new TimeStamp(subtitleTimer.CurrentTime.ToMilliSeconds() - 1000);
-
-                subtitleTimer.Seek(currentTime);
-            }
-        }
-
-        private void openSubtitleButtonClick(object sender, RoutedEventArgs e)
-        {
-            // Configure open file dialog box
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-            dlg.FileName = "Subtitle"; // Default file name
-            dlg.DefaultExt = ".srt"; // Default file extension
-            dlg.Filter = "Subtitles (*.srt) | *.srt";
-
-            // Show open file dialog box
-            Nullable<bool> result = dlg.ShowDialog();
-
-            // Process open file dialog box results 
-            if (result == true)
-            {
-                // Open document 
-                string filename = dlg.FileName;
-
-                subtitle = new Subtitle(filename);
-
-                subtitleTimer = new SubtitleTimer(subtitle);
-
-                setBindings();
-
-                timeSlider = new TimeSlider(timeSliderControl, subtitle, subtitleTimer);
-
-                subtitleLoaded = true;
-                setComponentsVisible();
-            }
-        }
 
         /// <summary>
-        ///  Mouse entering the window
+        ///     Sets the window visible
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Window_MouseEnter(object sender, MouseEventArgs e)
-        {
-            if (subtitleLoaded)
-                setComponentsVisible();
-        }
-
-        /// <summary>
-        /// Mouse leaving the window
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MetroWindow_MouseLeave(object sender, MouseEventArgs e)
-        {
-            if (subtitleLoaded)
-                setComponentsInvisible();
-        }
-
         private void setComponentsVisible()
         {
             this.ShowTitleBar = true;
@@ -152,6 +104,9 @@ namespace SubtitlePlayer
             timeSliderControl.Visibility = Visibility.Visible;
         }
 
+        /// <summary>
+        ///     Sets the window invisible
+        /// </summary>
         private void setComponentsInvisible()
         {
             this.ShowTitleBar = false;
@@ -191,6 +146,73 @@ namespace SubtitlePlayer
             }
         }
 
+        private void addButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (subtitleTimer != null)
+            {
+                TimeStamp currentTime = new TimeStamp(subtitleTimer.CurrentTime.ToMilliSeconds() + 1000);
+
+                subtitleTimer.Seek(currentTime);
+            }
+        }
+        private void subtractButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (subtitleTimer != null)
+            {
+                TimeStamp currentTime = new TimeStamp(subtitleTimer.CurrentTime.ToMilliSeconds() - 1000);
+
+                subtitleTimer.Seek(currentTime);
+            }
+        }
+
+        /// <summary>
+        ///     Open file dialog
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void openSubtitleButtonClick(object sender, RoutedEventArgs e)
+        {
+            // Configure open file dialog box
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            dlg.FileName = "Subtitle"; // Default file name
+            dlg.DefaultExt = ".srt"; // Default file extension
+            dlg.Filter = "Subtitles (*.srt) | *.srt";
+
+            // Show open file dialog box
+            Nullable<bool> result = dlg.ShowDialog();
+
+            // Process open file dialog box results 
+            if (result == true)
+            {
+                // Open document 
+                string filename = dlg.FileName;
+
+                startSubtitle(filename);
+            }
+        }
+
+        /// <summary>
+        ///  Mouse entering the window
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (subtitleLoaded)
+                setComponentsVisible();
+        }
+
+        /// <summary>
+        /// Mouse leaving the window
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MetroWindow_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (subtitleLoaded)
+                setComponentsInvisible();
+        }
+
 
         private void settingsButtonClick(object sender, RoutedEventArgs e)
         {
@@ -204,9 +226,11 @@ namespace SubtitlePlayer
                 
         }
 
-        private void MetroWindow_DragOver(object sender, DragEventArgs e)
+        private void windowDropFileHandler(object sender, DragEventArgs e)
         {
-            MessageBox.Show("");
+            string[] filenames = (string[])e.Data.GetData(DataFormats.FileDrop, true);
+            startSubtitle(filenames[0]);
         }
+
     }
 }

@@ -4,7 +4,14 @@
         xmlns:local="clr-namespace:SubtitlePlayer.Converters"
         xmlns:slider="clr-namespace:SubtitlePlayer"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        Title="Subtitle Reader" Topmost="True" Height="250" Width="800" WindowStyle="None" AllowsTransparency="True" Background="Transparent" MouseEnter="Window_MouseEnter" MouseLeave="MetroWindow_MouseLeave"  ShowTitleBar="False" DragOver="MetroWindow_DragOver">
+        Title="Subtitle Reader" Topmost="True" Height="250" Width="800" 
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        AllowDrop="True"
+        MouseEnter="Window_MouseEnter" 
+        MouseLeave="MetroWindow_MouseLeave"
+        Drop="windowDropFileHandler"
+        ShowTitleBar="False" >
+
     <Window.Resources>
         <SolidColorBrush x:Key="TransparentBlue" Color="#00b0f0" Opacity="0.5" />
         <local:StringFormatter x:Key="StringConverter"/>
