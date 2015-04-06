@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:SubtitlePlayer.Converters"
         xmlns:slider="clr-namespace:SubtitlePlayer"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        Title="Subtitle Reader" Topmost="True" Height="250" Width="800" WindowStyle="None" AllowsTransparency="True" Background="Transparent" MouseEnter="Window_MouseEnter" MouseLeave="MetroWindow_MouseLeave"  ShowTitleBar="False">
+        Title="Subtitle Reader" Topmost="True" Height="250" Width="800" WindowStyle="None" AllowsTransparency="True" Background="Transparent" MouseEnter="Window_MouseEnter" MouseLeave="MetroWindow_MouseLeave"  ShowTitleBar="False" DragOver="MetroWindow_DragOver">
     <Window.Resources>
         <SolidColorBrush x:Key="TransparentBlue" Color="#00b0f0" Opacity="0.5" />
         <local:StringFormatter x:Key="StringConverter"/>
@@ -14,8 +14,8 @@
     <Border Name="myBorder" BorderThickness="3">
         <Grid Name="myGrid" Background="#01FF0000">
             <Grid.RowDefinitions>
-                <RowDefinition Height="151*"/>
-                <RowDefinition Height="93*"/>
+                <RowDefinition Height="149*"/>
+                <RowDefinition Height="95*"/>
             </Grid.RowDefinitions>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
@@ -23,24 +23,54 @@
                     <ColumnDefinition Width="10*" />
                     <ColumnDefinition Width="4*" />
                 </Grid.ColumnDefinitions>
-                <Button Name="openButton" Content="Open" Click="openSubtitleButtonClick" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Bottom" Width="75"/>
-                <Button Name="playPauseButton"   Content="Play" Click="playPauseButton_Click" Margin="5" VerticalAlignment="Bottom" Width="75" HorizontalAlignment="Right"/>
-                <TextBox Name="timeStampTextBox"  Text="{Binding Path=CurrentTime, Mode=OneWay, Converter={StaticResource StringConverter}}" Grid.Column="2" Width="120" Height="30" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+
+                <Button Name="openButton" Content="Open" 
+                        Click="openSubtitleButtonClick" HorizontalAlignment="Left" 
+                        Margin="5" VerticalAlignment="Bottom" Width="75"/>
+
+                <Button Name="playPauseButton"  Content="Play" 
+                        Click="playPauseButton_Click" Margin="5" VerticalAlignment="Bottom" 
+                        Width="75" HorizontalAlignment="Right"/>
+
+                <Button Name="settingsButton" Click="settingsButtonClick" 
+                        Content="Settings" Margin="0,0,0,5" Width="75" HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.Column="1"/>
+
+                <TextBox Name="timeStampTextBox"  
+                         Text="{Binding Path=CurrentTime, Mode=OneWay, Converter={StaticResource StringConverter}}" 
+                         Grid.Column="2" Width="120" Height="30" HorizontalContentAlignment="Center" 
+                         VerticalContentAlignment="Center"></TextBox>
+
                 <Slider Name="timeSliderControl" 
                         Value="{Binding Path=CurrentTime,
                                 Mode=TwoWay, 
                                 Converter={StaticResource TimeStampConverter},
-                                ConverterParameter={RelativeSource Self}}" Margin="10,10,10,45" Grid.Column="1" 
-                        />
+                                ConverterParameter={RelativeSource Self}}" Margin="10,10,10,45" Grid.Column="1"/>
             </Grid>
-            <TextBlock Name="subtitleText" 
-                       FontSize="33" TextAlignment="Center" 
-                       Text="{Binding Path=CurrentSegment.Content}" 
-                       HorizontalAlignment="Left" Margin="0,5,0,0" 
-                       TextWrapping="Wrap" VerticalAlignment="Top" 
-                       Height="136" Width="794"/>
-            <Button Name="addButton" Content="+" Click="addButtonClick" HorizontalAlignment="Left" Margin="392,0,0,10" Grid.Row="1" VerticalAlignment="Bottom" Width="75" Height="25"/>
-            <Button Name="subtractButton" Content="-" Click="subtractButtonClick" HorizontalAlignment="Left" Margin="294,0,0,10" Grid.Row="1" VerticalAlignment="Bottom" Width="75" Height="25"/>
+
+            <Button Name="addButton" Content="+" 
+                    Click="addButtonClick" HorizontalAlignment="Left" 
+                    Margin="392,0,0,10" Grid.Row="1" VerticalAlignment="Bottom" 
+                    Width="75" Height="25"/>
+
+            <Button Name="subtractButton" Content="-" 
+                    Click="subtractButtonClick" HorizontalAlignment="Left" 
+                    Margin="294,0,0,10" Grid.Row="1" VerticalAlignment="Bottom" 
+                    Width="75" Height="25"/>
+
+            <Viewbox Name="subtitleViewBox"  StretchDirection="DownOnly" 
+                     Width="794" Margin="-10,0,0,2" 
+                     HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="Auto">
+
+                <TextBlock x:Name="subtitleText" 
+                    IsHitTestVisible="False"
+                    FontSize="16" TextAlignment="Center"
+                    Text="{Binding CurrentSegment.Content}" 
+                    TextWrapping="Wrap" 
+                    Height="Auto" Width="Auto" LineStackingStrategy="BlockLineHeight"/>
+
+            </Viewbox>
+           
+
         </Grid>
     </Border>
     <!--  <Grid Background="Transparent">

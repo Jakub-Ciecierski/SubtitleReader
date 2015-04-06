@@ -17,6 +17,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MahApps;
 using MahApps.Metro.Controls;
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
 namespace SubtitlePlayer
 {
     /// <summary>
@@ -24,17 +26,28 @@ namespace SubtitlePlayer
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
+        private const int GWL_STYLE = -16;
+        private const int WS_SYSMENU = 0x80000;
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+        [DllImport("user32.dll")]
+        private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
         private Subtitle subtitle;
 
         private SubtitleTimer subtitleTimer;
 
         private TimeSlider timeSlider;
 
+        bool subtitleLoaded = false;
+
         public MainWindow()
         {
             InitializeComponent();
-            //var background = new SolidColorBrush(Colors.White);
-           // this.Background = background;
+
+            var hwnd = new WindowInteropHelper(this).Handle;
+            SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_SYSMENU);
+
             this.AllowsTransparency = true;
             this.WindowStyle = WindowStyle.None;
             this.ShowTitleBar = true;
@@ -92,6 +105,9 @@ namespace SubtitlePlayer
                 setBindings();
 
                 timeSlider = new TimeSlider(timeSliderControl, subtitle, subtitleTimer);
+
+                subtitleLoaded = true;
+                setComponentsVisible();
             }
         }
 
@@ -102,18 +118,8 @@ namespace SubtitlePlayer
         /// <param name="e"></param>
         private void Window_MouseEnter(object sender, MouseEventArgs e)
         {
-            this.ShowTitleBar = true;
-            Color color = (Color)ColorConverter.ConvertFromString("#FFDFD991");
-            myBorder.BorderBrush = new SolidColorBrush(color);
-            color = (Color)ColorConverter.ConvertFromString("#4F000000");
-            this.Background = new SolidColorBrush(color);
-
-            playPauseButton.Visibility = Visibility.Visible;
-            openButton.Visibility = Visibility.Visible;
-            timeStampTextBox.Visibility = Visibility.Visible;
-            timeSliderControl.Visibility = Visibility.Visible;
-            subtractButton.Visibility = Visibility.Visible;
-            addButton.Visibility = Visibility.Visible;
+            if (subtitleLoaded)
+                setComponentsVisible();
         }
 
         /// <summary>
@@ -123,20 +129,45 @@ namespace SubtitlePlayer
         /// <param name="e"></param>
         private void MetroWindow_MouseLeave(object sender, MouseEventArgs e)
         {
+            if (subtitleLoaded)
+                setComponentsInvisible();
+        }
+
+        private void setComponentsVisible()
+        {
+            this.ShowTitleBar = true;
+            Color color = (Color)ColorConverter.ConvertFromString("#FFDFD991");
+            myBorder.BorderBrush = new SolidColorBrush(color);
+            color = (Color)ColorConverter.ConvertFromString("#4F000000");
+            this.Background = new SolidColorBrush(color);
+
+            openButton.Visibility = Visibility.Visible;
+            settingsButton.Visibility = Visibility.Visible;
+            playPauseButton.Visibility = Visibility.Visible;
+
+            subtractButton.Visibility = Visibility.Visible;
+            addButton.Visibility = Visibility.Visible;
+
+            timeStampTextBox.Visibility = Visibility.Visible;
+            timeSliderControl.Visibility = Visibility.Visible;
+        }
+
+        private void setComponentsInvisible()
+        {
             this.ShowTitleBar = false;
             Color color = (Color)ColorConverter.ConvertFromString("#00DFD991");
             myBorder.BorderBrush = new SolidColorBrush(color);
             color = (Color)ColorConverter.ConvertFromString("#01FF0000");
             this.Background = new SolidColorBrush(color);
-
-            playPauseButton.Visibility = Visibility.Collapsed;
             openButton.Visibility = Visibility.Collapsed;
-            timeStampTextBox.Visibility = Visibility.Collapsed;
-            timeSliderControl.Visibility = Visibility.Collapsed;
+            settingsButton.Visibility = Visibility.Collapsed;
+            playPauseButton.Visibility = Visibility.Collapsed;
+
             subtractButton.Visibility = Visibility.Collapsed;
             addButton.Visibility = Visibility.Collapsed;
-            
-            subtitleText.Visibility = Visibility.Visible;
+
+            timeStampTextBox.Visibility = Visibility.Collapsed;
+            timeSliderControl.Visibility = Visibility.Collapsed;
         }
 
         private void playPauseButton_Click(object sender, RoutedEventArgs e)
@@ -158,6 +189,24 @@ namespace SubtitlePlayer
                         subtitleTimer.Start();
                 }
             }
+        }
+
+
+        private void settingsButtonClick(object sender, RoutedEventArgs e)
+        {
+
+            FontChooser fontChooser = new FontChooser("Change font:", subtitleText.FontSize.ToString());
+            if (fontChooser.ShowDialog() == true)
+            {
+                subtitleText.FontSize = System.Convert.ToInt32(fontChooser.Answer);
+                MessageBox.Show(fontChooser.Answer);
+            }
+                
+        }
+
+        private void MetroWindow_DragOver(object sender, DragEventArgs e)
+        {
+            MessageBox.Show("");
         }
     }
 }

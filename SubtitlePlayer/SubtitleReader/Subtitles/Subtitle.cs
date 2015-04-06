@@ -73,7 +73,7 @@ namespace SubtitleReader.Subtitles
             // If time is lower than the first segment, set it to 0
             if (time.ToMilliSeconds() < segmentQueue[0].StartTime.ToMilliSeconds())
             {
-                currentIndex = 0;
+                currentIndex = -1;
                 return true;
             }
 
