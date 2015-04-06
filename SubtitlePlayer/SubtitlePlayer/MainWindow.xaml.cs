@@ -20,6 +20,7 @@ using MahApps.Metro.Controls;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using SubtitleReader.Util;
+using System.IO;
 
 namespace SubtitlePlayer
 {
@@ -43,10 +44,13 @@ namespace SubtitlePlayer
             this.AllowsTransparency = true;
             this.WindowStyle = WindowStyle.None;
             this.ShowTitleBar = true;
-            Color color = (Color)ColorConverter.ConvertFromString("#FFDFD991");
+            Color color = (Color)ColorConverter.ConvertFromString("#CC119EDA");
             myBorder.BorderBrush = new SolidColorBrush(color);
-            color = (Color)ColorConverter.ConvertFromString("#FF000000");
+            color = (Color)ColorConverter.ConvertFromString("#4F000000");
             this.Background = new SolidColorBrush(color);
+
+            color = (Color)ColorConverter.ConvertFromString("#C1000000");
+            animationGrid.Background = new SolidColorBrush(color);
         }
 
         /// <summary>
@@ -67,6 +71,10 @@ namespace SubtitlePlayer
             timeSlider = new TimeSlider(timeSliderControl, subtitle, subtitleTimer);
 
             subtitleLoaded = true;
+
+            dragAndDropInfoTextBlock.Visibility = Visibility.Collapsed;
+            this.Title = System.IO.Path.GetFileNameWithoutExtension(filename); 
+
             setComponentsVisible();
         }
 
@@ -85,7 +93,7 @@ namespace SubtitlePlayer
         private void setComponentsVisible()
         {
             this.ShowTitleBar = true;
-            Color color = (Color)ColorConverter.ConvertFromString("#FFDFD991");
+            Color color = (Color)ColorConverter.ConvertFromString("#CC119EDA");
             myBorder.BorderBrush = new SolidColorBrush(color);
             color = (Color)ColorConverter.ConvertFromString("#4F000000");
             this.Background = new SolidColorBrush(color);
@@ -99,6 +107,10 @@ namespace SubtitlePlayer
 
             timeStampTextBox.Visibility = Visibility.Visible;
             timeSliderControl.Visibility = Visibility.Visible;
+
+            myBorder.Margin = new Thickness(0);
+
+            this.ShowCloseButton = true;
         }
 
         /// <summary>
@@ -120,6 +132,10 @@ namespace SubtitlePlayer
 
             timeStampTextBox.Visibility = Visibility.Collapsed;
             timeSliderControl.Visibility = Visibility.Collapsed;
+
+            myBorder.Margin = new Thickness(0, 30, 0, 0);
+
+            this.ShowCloseButton = false;
         }
 
         /********************** EVENT HANDLERS **********************/
@@ -197,7 +213,7 @@ namespace SubtitlePlayer
         /// <param name="e"></param>
         private void Window_MouseEnter(object sender, MouseEventArgs e)
         {
-            if (subtitleLoaded)
+            if (playPauseButton.Content.Equals("Stop"))
                 setComponentsVisible();
         }
 
@@ -208,7 +224,7 @@ namespace SubtitlePlayer
         /// <param name="e"></param>
         private void MetroWindow_MouseLeave(object sender, MouseEventArgs e)
         {
-            if (subtitleLoaded)
+            if (playPauseButton.Content.Equals("Stop"))
                 setComponentsInvisible();
         }
 
@@ -237,6 +253,17 @@ namespace SubtitlePlayer
         {
             string[] filenames = (string[])e.Data.GetData(DataFormats.FileDrop, true);
             startSubtitle(filenames[0]);
+            animationGrid.Visibility = Visibility.Collapsed;
+            playPauseButton.Content = "Play";
+        }
+
+        private void windowDragEnterHandler(object sender, DragEventArgs e)
+        {
+            animationGrid.Visibility = Visibility.Visible;
+        }
+        private void windowDragLeaveHandler(object sender, DragEventArgs e)
+        {
+            animationGrid.Visibility = Visibility.Collapsed;
         }
 
     }
