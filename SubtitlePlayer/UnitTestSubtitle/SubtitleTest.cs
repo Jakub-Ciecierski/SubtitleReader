@@ -107,5 +107,22 @@ namespace UnitTestSubtitle
 
             Assert.AreEqual(expectedTime, actualTime);
         }
+
+
+        [TestMethod]
+        public void Regex_Tag_TagRemoved()
+        {
+            string actualContent = "<format> asd </format>";
+
+            string pattern = @"</?\w+>";
+            string rep = "";
+            Regex r = new Regex(pattern);
+
+            actualContent = r.Replace(actualContent, rep);
+
+            string expectedContent = " asd ";
+
+            Assert.AreEqual(expectedContent, actualContent);
+        }
     }
 }

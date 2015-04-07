@@ -34,7 +34,7 @@ namespace SubtitleReader.SubLoaders
         /*******************************************************************/
         private void loadFromFile(List<Segment> segments)
         {
-            string[] lines = System.IO.File.ReadAllLines(filename);
+            string[] lines = System.IO.File.ReadAllLines(filename, Encoding.GetEncoding("ISO-8859-1"));
 
             int i = 0;
             while (i < lines.Length)
@@ -47,12 +47,72 @@ namespace SubtitleReader.SubLoaders
                     {
                         content += lines[i++] + "\n";
                     }
+
+                    content = handleTagging(content);
+
                     Segment segment = new Segment(id, timeStamps[0], timeStamps[1], content);
                     segments.Add(segment);
                 }
                 catch (IndexOutOfRangeException e){Console.Write("Tried to access index ouf of range of srt file\n");}
                 i++;
             }
+        }
+
+        /// <summary>
+        ///     Handles all the tagging in srt file
+        /// </summary>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        private string handleTagging(string content) 
+        {
+            string pattern = @"</?\w+>";
+            string rep = "";
+
+            Regex r = new Regex(pattern);
+
+            content = r.Replace(content, rep);
+
+            return content;
+        }
+
+
+        private string encoding(string content)
+        {
+            /*
+            Encoding utf32 = Encoding.UTF32;
+            Encoding iso = Encoding.GetEncoding("ISO-8859-1");
+            Encoding utf8 = Encoding.Default;
+
+            Encoding utf16 = Encoding.Unicode;
+
+            Encoding asci = Encoding.ASCII;
+            byte[] utfBytes = asci.GetBytes(content);
+
+            byte[] isoBytes = Encoding.Convert(asci, iso, utfBytes);
+            content = iso.GetString(isoBytes);
+            */
+
+            const string data = "A string with international characters: Norwegian: ÆØÅæøå, Chinese: 喂 谢谢, Polish: ąźżćó, Arabic: أنظر للأسفل";
+            var bytes = System.Text.Encoding.Unicode.GetBytes(data);
+            var decoded = System.Text.Encoding.Unicode.GetString(bytes);
+
+            Console.Write(decoded);
+
+            return decoded;
+
+
+
+
+            /* reads arabic
+            Encoding utf32 = Encoding.UTF32;
+            Encoding iso = Encoding.GetEncoding("ISO-8859-1");
+            Encoding utf8 = Encoding.UTF8;
+            Encoding utf16 = Encoding.Unicode;
+
+            byte[] utfBytes = utf8.GetBytes(content);
+            byte[] isoBytes = Encoding.Convert(utf8, utf32, utfBytes);
+            content = utf32.GetString(isoBytes);
+             */
         }
 
         /// <summary>

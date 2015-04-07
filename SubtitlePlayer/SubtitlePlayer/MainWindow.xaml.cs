@@ -51,6 +51,8 @@ namespace SubtitlePlayer
 
             color = (Color)ColorConverter.ConvertFromString("#C1000000");
             animationGrid.Background = new SolidColorBrush(color);
+
+            
         }
 
         /// <summary>
@@ -76,6 +78,8 @@ namespace SubtitlePlayer
             this.Title = System.IO.Path.GetFileNameWithoutExtension(filename); 
 
             setComponentsVisible();
+
+            playPauseButton.Content = "Play";
         }
 
         /// <summary>
@@ -254,7 +258,6 @@ namespace SubtitlePlayer
             string[] filenames = (string[])e.Data.GetData(DataFormats.FileDrop, true);
             startSubtitle(filenames[0]);
             animationGrid.Visibility = Visibility.Collapsed;
-            playPauseButton.Content = "Play";
         }
 
         private void windowDragEnterHandler(object sender, DragEventArgs e)

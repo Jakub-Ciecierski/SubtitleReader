@@ -1,6 +1,6 @@
 ﻿1
 00:00:00,667 --> 00:00:03,335
-<i>(ADDRESS UNKNOWN</i> PLAYS1)
+<i>ą(ADDRESS UNKNOWN</i> PLAYS1)
 <i>(ADDRESS UNKNOWN</i> PLAYS2) iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
 <i>(ADDRESS UNKNOWN</i> PLAYS3)
 <i>(ADDRESS UNKNOWN</i> PLAYS4)
