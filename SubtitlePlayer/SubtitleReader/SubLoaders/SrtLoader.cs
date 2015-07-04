@@ -34,13 +34,26 @@ namespace SubtitleReader.SubLoaders
         /*******************************************************************/
         private void loadFromFile(List<Segment> segments)
         {
-            string[] lines = System.IO.File.ReadAllLines(filename, Encoding.GetEncoding("ISO-8859-1"));
+            //string[] lines = System.IO.File.ReadAllLines(filename, Encoding.GetEncoding("ISO-8859-1"));
+            string[] lines = System.IO.File.ReadAllLines(filename, Encoding.Default);
 
             int i = 0;
             while (i < lines.Length)
             {
                 try{
-                    int id = Convert.ToInt32(lines[i++]);
+                    bool gotID = false;
+                    int id = 0;
+
+                    while (!gotID)
+                    {
+                        try
+                        {
+                            id = Convert.ToInt32(lines[i++]);
+                            gotID = true;
+                        }
+                        catch (FormatException ex) { }
+                    }
+
                     TimeStamp[] timeStamps = parseTimeStamp(lines[i++]);
                     string content = "";
                     while (!lines[i].Equals(""))

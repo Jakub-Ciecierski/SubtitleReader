@@ -124,5 +124,26 @@ namespace UnitTestSubtitle
 
             Assert.AreEqual(expectedContent, actualContent);
         }
+
+        delegate int Del(TimeStamp time);        
+
+        [TestMethod]
+        public void test()
+        {
+            TimeStamp time = new TimeStamp(100000);
+                
+            Del d =  delegate(TimeStamp t)
+            { 
+                if (t.ToMilliSeconds() == time.ToMilliSeconds())
+                    return 1;
+                else
+                    return 0;
+            };
+
+
+            int k = d(new TimeStamp(100000));
+
+            Console.Write(k);
+        }
     }
 }
